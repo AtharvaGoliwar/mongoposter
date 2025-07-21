@@ -3,13 +3,15 @@ from pymongo import MongoClient
 from datetime import datetime
 import os
 from bson import ObjectId
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
 # MongoDB Atlas connection
 # Replace with your actual MongoDB Atlas connection string
-MONGO_URI = "mongodb+srv://atharvagoliwar23:ErHbkndToW4rSvui@cluster0.yqtedoj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-
+MONGO_URI = os.getenv(MONGO_URI)
 try:
     client = MongoClient(MONGO_URI)
     db = client.code_db  # Database name
