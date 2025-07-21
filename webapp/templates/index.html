@@ -121,7 +121,7 @@
             font-family: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;
             font-size: clamp(13px, 1.5vw, 14px);
             line-height: 1.6;
-            resize: vertical;
+            /* resize: vertical; */
             transition: all 0.3s ease;
             background: rgba(255, 255, 255, 0.9);
         }
@@ -449,7 +449,7 @@ console.log(fibonacci(10));"></textarea>
         });
 
         // Add focus animation
-        const inputs = document.querySelectorAll('input, textarea');
+        const inputs = document.querySelectorAll('input');
         inputs.forEach(input => {
             input.addEventListener('focus', function() {
                 this.style.transform = 'scale(1.02)';
