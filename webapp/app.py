@@ -11,11 +11,13 @@ app = Flask(__name__)
 
 # MongoDB Atlas connection
 # Replace with your actual MongoDB Atlas connection string
-MONGO_URI = os.getenv(MONGO_URI)
+MONGO_URI = os.getenv("MONGO_URI")
+DB = os.getenv("DB")
+COLLECTION = os.getenv("COLLECTION")
 try:
     client = MongoClient(MONGO_URI)
-    db = client.code_db  # Database name
-    collection = db.code_snippets   # Collection name
+    db = client.DB # Database name
+    collection = db.COLLECTION   # Collection name
     
     # Test the connection
     client.admin.command('ping')
