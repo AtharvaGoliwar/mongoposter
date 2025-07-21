@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Code Snippets</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: clamp(10px, 2vw, 20px);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: clamp(20px, 4vw, 30px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: clamp(20px, 3vw, 30px);
+            text-align: center;
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: clamp(15px, 2vw, 20px);
+            font-weight: 700;
+        }
+        
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(10px, 2vw, 15px);
+            flex-wrap: wrap;
+        }
+        
+        .back-btn, .refresh-btn {
+            background: linear-gradient(135deg, #38a169 0%, #48bb78 100%);
+            color: white;
+            border: none;
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 3vw, 25px);
+            border-radius: 10px;
+            font-size: clamp(13px, 2vw, 14px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #3182ce 0%, #4299e1 100%);
+        }
+        
+        .back-btn:hover, .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(56, 161, 105, 0.3);
+        }
+        
+        .refresh-btn:hover {
+            box-shadow: 0 10px 25px rgba(49, 130, 206, 0.3);
+        }
+        
+        .search-container {
+            margin-top: 20px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .snippets-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 500px), 1fr));
+            gap: clamp(15px, 3vw, 20px);
+            animation: fadeIn 0.6s ease-out 0.2s both;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .snippet-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: clamp(15px, 3vw, 25px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .snippet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .snippet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f7fafc;
+            gap: 15px;
+        }
+        
+        .snippet-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .snippet-name {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+        
+        .snippet-date {
+            font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+            color: #718096;
+        }
+        
+        .snippet-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            color: #718096;
+        }
+        
+        .copy-btn:hover {
+            background: #e6fffa;
+            color: #38a169;
+        }
+        
+        .delete-btn:hover {
+            background: #fed7d7;
+            color: #e53e3e;
+        }
+        
+        .code-container {
+            background: #1a202c;
+            border-radius: 12px;
+            padding: clamp(15px, 2vw, 20px);
+            overflow: hidden;
+            margin-top: 15px;
+            position: relative;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #2d3748;
+        }
+        
+        .code-lang {
+            font-size: 12px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .copy-code-btn {
+            background: #2d3748;
+            color: #e2e8f0;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-code-btn:hover {
+            background: #4a5568;
+        }
+        
+        .code-content {
+            font-family: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;
+            color: #f7fafc;
+            font-size: clamp(12px, 1.5vw, 14px);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .code-content::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .code-content::-webkit-scrollbar-track {
+            background: #2d3748;
+            border-radius: 4px;
+        }
+        
+        .code-content::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 4px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            margin-top: 50px;
+            padding: 40px;
+        }
+        
+        .loading:after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .no-snippets {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: clamp(30px, 5vw, 40px);
+            text-align: center;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            color: #4a5568;
+        }
+        
+        .no-snippets h2 {
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #38a169;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.error {
+            background: #e53e3e;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .snippets-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .snippet-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .snippet-actions {
+                align-self: flex-end;
+            }
+            
+            .code-content {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .back-btn, .refresh-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .header, .snippet-card, .no-snippets {
+                background: rgba(26, 32, 44, 0.95);
+                color: #e2e8f0;
+            }
+            
+            h1 {
+                color: #e2e8f0;
+            }
+            
+            .snippet-name {
+                color: #f7fafc;
+            }
+            
+            .search-input {
+                background: rgba(45, 55, 72, 0.8);
+                border-color: #4a5568;
+                color: #e2e8f0;
+            }
+            
+            .search-input:focus {
+                background: #2d3748;
+            }
+        }
+        
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Code Snippets Library</h1>
+            <div class="header-controls">
+                <a href="/" class="back-btn">← Back to Upload</a>
+                <button class="refresh-btn" onclick="loadSnippets()">🔄 Refresh</button>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="🔍 Search snippets..." id="searchInput">
+            </div>
+        </div>
+        
+        <div id="loading" class="loading">Loading your amazing code snippets...</div>
+        <div id="snippets-container" class="snippets-container" style="display: none;"></div>
+    </div>
+
+    <script>
+        let allSnippets = [];
+        
+        async function loadSnippets() {
+            const loadingDiv = document.getElementById('loading');
+            const containerDiv = document.getElementById('snippets-container');
+            
+            loadingDiv.style.display = 'block';
+            containerDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/snippets');
+                const data = await response.json();
+                
+                loadingDiv.style.display = 'none';
+                containerDiv.style.display = 'grid';
+                
+                if (data.snippets && data.snippets.length > 0) {
+                    allSnippets = data.snippets;
+                    displaySnippets(allSnippets);
+                } else {
+                    containerDiv.innerHTML = `
+                        <div class="no-snippets">
+                            <h2>🎭 No snippets found</h2>
+                            <p>Upload your first code snippet to get started!</p>
+                            <br>
+                            <a href="/" class="back-btn">✨ Create First Snippet</a>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                loadingDiv.innerHTML = `
+                    <div style="color: #fed7d7; background: rgba(229, 62, 62, 0.1); padding: 20px; border-radius: 12px;">
+                        ❌ Error loading snippets: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        function displaySnippets(snippets) {
+            const containerDiv = document.getElementById('snippets-container');
+            
+            if (snippets.length === 0) {
+                containerDiv.innerHTML = `
+                    <div class="no-snippets">
+                        <h2>🔍 No matching snippets</h2>
+                        <p>Try adjusting your search terms</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            containerDiv.innerHTML = snippets.map((snippet, index) => `
+                <div class="snippet-card" style="animation-delay: ${index * 0.1}s">
+                    <div class="snippet-header">
+                        <div class="snippet-info">
+                            <div class="snippet-name">${escapeHtml(snippet.name)}</div>
+                            <div class="snippet-date">${formatDate(snippet.created_at)}</div>
+                        </div>
+                        <div class="snippet-actions">
+                            <button class="action-btn copy-btn" onclick="copySnippet('${snippet._id}')" title="Copy snippet details">
+                                📋
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deleteSnippet('${snippet._id}')" title="Delete snippet">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-lang">Code Snippet</div>
+                            <button class="copy-code-btn" onclick="copyCode('${snippet._id}')">Copy Code</button>
+                        </div>
+                        <pre class="code-content" id="code-${snippet._id}">${escapeHtml(snippet.code)}</pre>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) {
+                return `Today at ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            } else if (diffDays === 2) {
+                return `Yesterday at ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            } else if (diffDays <= 7) {
+                return `${diffDays - 1} days ago`;
+            } else {
+                return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+        }
+        
+        async function copyCode(snippetId) {
+            const codeElement = document.getElementById(`code-${snippetId}`);
+            const code = codeElement.textContent;
+            
+            try {
+                await navigator.clipboard.writeText(code);
+                showToast('Code copied to clipboard! 📋', 'success');
+                
+                // Visual feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#38a169';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#2d3748';
+                }, 2000);
+            } catch (err) {
+                showToast('Failed to copy code', 'error');
+            }
+        }
+        
+        async function copySnippet(snippetId) {
+            const snippet = allSnippets.find(s => s._id === snippetId);
+            if (!snippet) return;
+            
+            const snippetText = `Name: ${snippet.name}\nCreated: ${formatDate(snippet.created_at)}\n\nCode:\n${snippet.code}`;
+            
+            try {
+                await navigator.clipboard.writeText(snippetText);
+                showToast('Snippet details copied! 📋', 'success');
+            } catch (err) {
+                showToast('Failed to copy snippet details', 'error');
+            }
+        }
+        
+        async function deleteSnippet(snippetId) {
+            const snippet = allSnippets.find(s => s._id === snippetId);
+            if (!snippet) return;
+            
+            if (!confirm(`Are you sure you want to delete "${snippet.name}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/delete/${snippetId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    showToast('Snippet deleted successfully! 🗑️', 'success');
+                    // Remove from local array and re-display
+                    allSnippets = allSnippets.filter(s => s._id !== snippetId);
+                    const searchTerm = document.getElementById('searchInput').value;
+                    const filteredSnippets = searchTerm 
+                        ? allSnippets.filter(s => 
+                            s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            s.code.toLowerCase().includes(searchTerm.toLowerCase())
+                          )
+                        : allSnippets;
+                    displaySnippets(filteredSnippets);
+                } else {
+                    showToast('Failed to delete snippet: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                showToast('Network error: ' + error.message, 'error');
+            }
+        }
+        
+        function showToast(message, type = 'success') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => toast.remove());
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            if (searchTerm === '') {
+                displaySnippets(allSnippets);
+                return;
+            }
+            
+            const filteredSnippets = allSnippets.filter(snippet =>
+                snippet.name.toLowerCase().includes(searchTerm) ||
+                snippet.code.toLowerCase().includes(searchTerm)
+            );
+            
+            displaySnippets(filteredSnippets);
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + F to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+            
+            // Escape to clear search
+            if (e.key === 'Escape') {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput === document.activeElement) {
+                    searchInput.blur();
+                }
+                searchInput.value = '';
+                displaySnippets(allSnippets);
+            }
+        });
+        
+        // Auto-refresh every 30 seconds if page is visible
+        let refreshInterval;
+        
+        function startAutoRefresh() {
+            refreshInterval = setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    loadSnippets();
+                }
+            }, 30000);
+        }
+        
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        }
+        
+        // Page visibility handling
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                startAutoRefresh();
+            } else {
+                stopAutoRefresh();
+            }
+        });
+        
+        // Initialize
+        loadSnippets();
+        startAutoRefresh();
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', stopAutoRefresh);
+    </script>
+</body>
+</html>
