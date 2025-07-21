@@ -16,8 +16,8 @@ DB = os.getenv("DB")
 COLLECTION = os.getenv("COLLECTION")
 try:
     client = MongoClient(MONGO_URI)
-    db = client.DB # Database name
-    collection = db.COLLECTION   # Collection name
+    db = client[DB] # Database name
+    collection = db[COLLECTION]   # Collection name
     
     # Test the connection
     client.admin.command('ping')
