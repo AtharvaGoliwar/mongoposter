@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Snippet Uploader</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: clamp(20px, 5vw, 40px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 900px;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: clamp(20px, 4vw, 30px);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .form-group {
+            margin-bottom: clamp(20px, 3vw, 25px);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: clamp(12px, 2vw, 15px);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: clamp(14px, 2vw, 16px);
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        select {
+            width: 100%;
+            min-height: clamp(50px, 8vh, 70px); /* gives it a bit more height for multiline feel */
+            padding: clamp(12px, 2vw, 15px);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: clamp(13px, 1.5vw, 14px);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            cursor: pointer;
+        }
+        select:focus {
+            outline: none;
+            border-color: #a0aec0; /* slightly darker for focus */
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3); /* soft blue glow */
+        }
+
+
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: clamp(200px, 30vh, 350px);
+            padding: clamp(12px, 2vw, 15px);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: clamp(13px, 1.5vw, 14px);
+            line-height: 1.6;
+            /* resize: vertical; */
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+        
+        .btn-container {
+            display: flex;
+            gap: clamp(10px, 2vw, 15px);
+            margin-top: clamp(25px, 4vw, 30px);
+            flex-direction: column;
+        }
+        
+        @media (min-width: 480px) {
+            .btn-container {
+                flex-direction: row;
+            }
+        }
+        
+        button {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: clamp(12px, 2vw, 15px) clamp(20px, 3vw, 30px);
+            border-radius: 12px;
+            font-size: clamp(14px, 2vw, 16px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        button:hover:before {
+            left: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .view-btn {
+            background: linear-gradient(135deg, #38a169 0%, #48bb78 100%);
+        }
+        
+        .view-btn:hover {
+            box-shadow: 0 15px 35px rgba(56, 161, 105, 0.4);
+        }
+        
+        .alert {
+            padding: clamp(12px, 2vw, 15px);
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 500;
+            font-size: clamp(14px, 2vw, 16px);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .alert-success {
+            background-color: #f0fff4;
+            border: 2px solid #9ae6b4;
+            color: #276749;
+        }
+        
+        .alert-error {
+            background-color: #fed7d7;
+            border: 2px solid #fc8181;
+            color: #742a2a;
+        }
+        
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .loading button {
+            position: relative;
+        }
+        
+        .loading button:after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            }
+            
+            textarea {
+                font-size: 14px;
+            }
+            
+            button {
+                padding: 14px 24px;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: rgba(26, 32, 44, 0.95);
+                color: #e2e8f0;
+            }
+            
+            h1 {
+                color: #e2e8f0;
+            }
+            
+            label {
+                color: #cbd5e0;
+            }
+            
+            input[type="text"],
+            textarea {
+                background: rgba(45, 55, 72, 0.8);
+                border-color: #4a5568;
+                color: #e2e8f0;
+            }
+            
+            input[type="text"]:focus,
+            textarea:focus {
+                background: #2d3748;
+                border-color: #667eea;
+            }
+        }
+        
+        /* High contrast mode */
+        @media (prefers-contrast: high) {
+            .container {
+                background: white;
+                border: 2px solid #000;
+            }
+            
+            input[type="text"],
+            textarea {
+                border-color: #000;
+            }
+            
+            button {
+                background: #000;
+                border: 2px solid #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Code Snippet Uploader</h1>
+        
+        <div id="message-area"></div>
+        
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="name">✨ Snippet Name:</label>
+                <label for="name">Select a descriptive name for your code snippet:</label>
+                <select id="name" name="name" required>
+                <option value="" disabled selected>Select a name</option>
+                <option value="Bulletraja">Bulletraja</option>
+                <option value="Superman">Superman</option>
+                <option value="Mrbona">Mr Bona</option>
+                <option value="Rebelkid">Rebel kid</option>
+                <option value="Foodies">Foodies</option>
+                <!-- Add more options as needed -->
+                </select>
+
+            </div>
+            
+            <div class="form-group">
+                <label for="code">💻 Code:</label>
+                <textarea id="code" name="code" required placeholder="// Paste your amazing code here...
+// Example:
+function fibonacci(n) {
+    if (n <= 1) return n;
+    return fibonacci(n-1) + fibonacci(n-2);
+}
+
+console.log(fibonacci(10));"></textarea>
+            </div>
+            
+            <div class="btn-container">
+                <button type="submit" id="submitBtn">🚀 Upload Code</button>
+                <button type="button" class="view-btn" onclick="window.location.href='/view'">👀 View Snippets</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Auto-resize textarea
+        const textarea = document.getElementById('code');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(this.scrollHeight, 200) + 'px';
+        });
+
+        // Form submission
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const messageArea = document.getElementById('message-area');
+            const form = document.getElementById('uploadForm');
+            const originalText = submitBtn.textContent;
+            
+            // Show loading state
+            submitBtn.textContent = '⏳ Uploading...';
+            form.classList.add('loading');
+            messageArea.innerHTML = '';
+            
+            try {
+                const formData = new FormData();
+                formData.append('name', document.getElementById('name').value.trim());
+                formData.append('code', document.getElementById('code').value.trim());
+                
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    messageArea.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ ${result.message}
+                            <br><small>Snippet ID: ${result.id}</small>
+                        </div>
+                    `;
+                    document.getElementById('uploadForm').reset();
+                    textarea.style.height = 'auto';
+                    
+                    // Auto-hide success message after 5 seconds
+                    setTimeout(() => {
+                        const successAlert = messageArea.querySelector('.alert-success');
+                        if (successAlert) {
+                            successAlert.style.opacity = '0';
+                            successAlert.style.transform = 'translateY(-10px)';
+                            setTimeout(() => successAlert.remove(), 300);
+                        }
+                    }, 5000);
+                } else {
+                    messageArea.innerHTML = `
+                        <div class="alert alert-error">
+                            ❌ Error: ${result.error || 'Unknown error occurred'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                messageArea.innerHTML = `
+                    <div class="alert alert-error">
+                        🌐 Network error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                // Reset button and form state
+                submitBtn.textContent = originalText;
+                form.classList.remove('loading');
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + Enter to submit form
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('uploadForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Add focus animation
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

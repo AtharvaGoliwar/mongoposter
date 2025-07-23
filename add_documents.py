@@ -2,9 +2,9 @@ from pymongo import MongoClient
 import time
 
 # Replace this with your own URI if using MongoDB Atlas
-MONGO_URI = "mongodb+srv://atharvagoliwar23:ErHbkndToW4rSvui@cluster0.yqtedoj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-DATABASE_NAME = "code_db"
-COLLECTION_NAME = "code_snippets"
+MONGO_URI = "abc"
+DATABASE_NAME = "db"
+COLLECTION_NAME = "collection"
 
 # Connect to MongoDB
 client = MongoClient(MONGO_URI)

@@ -324,9 +324,9 @@ def main():
     """Main function to run the polling monitor"""
     
     # Configuration
-    MONGODB_URI = "mongodb+srv://atharvagoliwar23:ErHbkndToW4rSvui@cluster0.yqtedoj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    DATABASE_NAME = "code_db"
-    COLLECTION_NAME = "code_snippets" # Update with your collection name
+    MONGODB_URI = "abc"
+    DATABASE_NAME = "db"
+    COLLECTION_NAME = "collection"# Update with your collection name
     POLL_INTERVAL = 2  # Check every 2 seconds
     
     # Optional filters

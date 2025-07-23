@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Snippet Uploader</title>
+    <title>Secure Code Snippet Uploader</title>
     <style>
         * {
             box-sizing: border-box;
@@ -68,7 +68,7 @@
             font-size: clamp(0.9rem, 2vw, 1.1rem);
         }
         
-        input[type="text"] {
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: clamp(12px, 2vw, 15px);
             border: 2px solid #e2e8f0;
@@ -80,7 +80,7 @@
 
         select {
             width: 100%;
-            min-height: clamp(50px, 8vh, 70px); /* gives it a bit more height for multiline feel */
+            min-height: clamp(50px, 8vh, 70px);
             padding: clamp(12px, 2vw, 15px);
             border: 2px solid #e2e8f0;
             border-radius: 12px;
@@ -97,15 +97,8 @@
             background-size: 16px;
             cursor: pointer;
         }
-        select:focus {
-            outline: none;
-            border-color: #a0aec0; /* slightly darker for focus */
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3); /* soft blue glow */
-        }
-
-
         
-        input[type="text"]:focus {
+        select:focus, input[type="text"]:focus, input[type="password"]:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -121,7 +114,6 @@
             font-family: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;
             font-size: clamp(13px, 1.5vw, 14px);
             line-height: 1.6;
-            /* resize: vertical; */
             transition: all 0.3s ease;
             background: rgba(255, 255, 255, 0.9);
         }
@@ -195,6 +187,94 @@
             box-shadow: 0 15px 35px rgba(56, 161, 105, 0.4);
         }
         
+        .logout-btn {
+            background: linear-gradient(135deg, #e53e3e 0%, #f56565 100%);
+            padding: 8px 16px;
+            font-size: 12px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        
+        .logout-btn:hover {
+            box-shadow: 0 10px 20px rgba(229, 62, 62, 0.4);
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        
+        .download-btn:hover {
+            box-shadow: 0 15px 35px rgba(245, 87, 108, 0.4);
+        }
+        
+        .download-section {
+            background: rgba(240, 147, 251, 0.1);
+            border: 2px dashed rgba(240, 147, 251, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+        }
+        
+        .download-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #718096;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .exe-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 20px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .download-status {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .download-success {
+            background-color: #f0fff4;
+            border: 1px solid #9ae6b4;
+            color: #276749;
+        }
+        
+        .download-error {
+            background-color: #fed7d7;
+            border: 1px solid #fc8181;
+            color: #742a2a;
+        }
+        
         .alert {
             padding: clamp(12px, 2vw, 15px);
             border-radius: 12px;
@@ -257,6 +337,32 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Login Form Styles */
+        .login-container {
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .lock-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 24px;
+        }
+        
+        .uploader-container {
+            position: relative;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
         /* Mobile optimizations */
         @media (max-width: 480px) {
             body {
@@ -274,6 +380,25 @@
             
             button {
                 padding: 14px 24px;
+            }
+            
+            /*Mobile responsive adjustments*/
+            .logout-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+            
+            .download-info {
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            .download-section {
+                padding: 20px 15px;
             }
         }
         
@@ -293,6 +418,8 @@
             }
             
             input[type="text"],
+            input[type="password"],
+            select,
             textarea {
                 background: rgba(45, 55, 72, 0.8);
                 border-color: #4a5568;
@@ -300,34 +427,37 @@
             }
             
             input[type="text"]:focus,
+            input[type="password"]:focus,
+            select:focus,
             textarea:focus {
                 background: #2d3748;
                 border-color: #667eea;
             }
         }
-        
-        /* High contrast mode */
-        @media (prefers-contrast: high) {
-            .container {
-                background: white;
-                border: 2px solid #000;
-            }
-            
-            input[type="text"],
-            textarea {
-                border-color: #000;
-            }
-            
-            button {
-                background: #000;
-                border: 2px solid #000;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Login Form -->
+    <div class="container login-container" id="loginForm">
+        <div class="lock-icon">🔒</div>
+        <h1>🔐 Secure Access</h1>
+        <div id="login-message-area"></div>
+        <form id="passwordForm">
+            <div class="form-group">
+                <label for="password">🔑 Enter Password:</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your access password" autocomplete="current-password">
+            </div>
+            <div class="btn-container">
+                <button type="submit" id="loginBtn">🚪 Access Uploader</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main Uploader (Hidden initially) -->
+    <div class="container uploader-container hidden" id="uploaderForm">
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
         <h1>📝 Code Snippet Uploader</h1>
+        
         
         <div id="message-area"></div>
         
@@ -336,27 +466,25 @@
                 <label for="name">✨ Snippet Name:</label>
                 <label for="name">Select a descriptive name for your code snippet:</label>
                 <select id="name" name="name" required>
-                <option value="" disabled selected>Select a name</option>
-                <option value="Bulletraja">Bulletraja</option>
-                <option value="Superman">Superman</option>
-                <option value="Mrbona">Mr Bona</option>
-                <option value="Rebelkid">Rebel kid</option>
-                <option value="Foodies">Foodies</option>
-                <!-- Add more options as needed -->
+                    <option value="" disabled selected>Select a name</option>
+                    <option value="Bulletraja">Bulletraja</option>
+                    <option value="Superman">Superman</option>
+                    <option value="Mrbona">Mr Bona</option>
+                    <option value="Rebelkid">Rebel kid</option>
+                    <option value="Foodies">Foodies</option>
                 </select>
-
             </div>
             
             <div class="form-group">
                 <label for="code">💻 Code:</label>
                 <textarea id="code" name="code" required placeholder="// Paste your amazing code here...
-// Example:
-function fibonacci(n) {
-    if (n <= 1) return n;
-    return fibonacci(n-1) + fibonacci(n-2);
-}
-
-console.log(fibonacci(10));"></textarea>
+                // Example:
+                function fibonacci(n) {
+                    if (n <= 1) return n;
+                    return fibonacci(n-1) + fibonacci(n-2);
+                }
+                
+                console.log(fibonacci(10));"></textarea>
             </div>
             
             <div class="btn-container">
@@ -364,9 +492,251 @@ console.log(fibonacci(10));"></textarea>
                 <button type="button" class="view-btn" onclick="window.location.href='/view'">👀 View Snippets</button>
             </div>
         </form>
+        <br>
+        <br>
+        <!-- Download Section -->
+        <div class="download-section">
+            <div class="exe-icon">📦</div>
+            <h3 style="margin-bottom: 10px;">Download Application</h3>
+            <p style="color: #718096; margin-bottom: 15px;">Get the latest version of our desktop application</p>
+            
+            <button class="download-btn" id="downloadBtn" onclick="downloadExe()">
+                <span id="downloadIcon">⬇️</span>
+                <span id="downloadText">Download MongoPaster.zip</span>
+            </button>
+            
+            <div class="download-info">
+                <span>📊 Version: v2.1.0</span>
+                <span>💾 Size: 23.3 MB</span>
+                <span>🖥️ Windows 10/11</span>
+            </div>
+            
+            <div id="downloadStatus"></div>
+        </div>
     </div>
 
     <script>
+        // Password configuration - Change this to your desired password
+        const CORRECT_PASSWORD = "admin123"; // Change this to your secure password
+        const SESSION_KEY = "codeUploaderAuth";
+        const SESSION_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+        
+        // Download configuration - Update these values for your exe file
+        const EXE_CONFIG = {
+            url: '/static/app/MongoPaster.zip', // Path to your exe file in the public folder
+            filename: 'MongoPaster.zip',
+            fileSize: '24 MB',
+            version: 'v2.1.0'
+        };
+
+        // Download exe function
+        async function downloadExe() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadIcon = document.getElementById('downloadIcon');
+            const downloadText = document.getElementById('downloadText');
+            const downloadStatus = document.getElementById('downloadStatus');
+            const originalText = downloadText.textContent;
+            
+            try {
+                // Show loading state
+                downloadBtn.disabled = true;
+                downloadBtn.style.opacity = '0.7';
+                downloadIcon.textContent = '⏳';
+                downloadText.textContent = 'Preparing download...';
+                downloadStatus.innerHTML = '';
+                
+                // Create a temporary anchor element to trigger download
+                const link = document.createElement('a');
+                link.href = EXE_CONFIG.url;
+                link.download = EXE_CONFIG.filename;
+                
+                // For better compatibility, try to fetch the file first
+                try {
+                    downloadText.textContent = 'Downloading...';
+                    const response = await fetch(EXE_CONFIG.url);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    
+                    link.href = downloadUrl;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Clean up the object URL
+                    window.URL.revokeObjectURL(downloadUrl);
+                    
+                    // Show success message
+                    downloadStatus.innerHTML = `
+                        <div class="download-status download-success">
+                            ✅ Download started successfully! Check your Downloads folder.
+                        </div>
+                    `;
+                    
+                } catch (fetchError) {
+                    // Fallback to direct download
+                    console.warn('Fetch failed, trying direct download:', fetchError);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    downloadStatus.innerHTML = `
+                        <div class="download-status download-success">
+                            ✅ Download initiated! If download doesn't start, <a href="${EXE_CONFIG.url}" download="${EXE_CONFIG.filename}" style="color: #276749; text-decoration: underline;">click here</a>.
+                        </div>
+                    `;
+                }
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    downloadStatus.innerHTML = '';
+                }, 5000);
+                
+            } catch (error) {
+                console.error('Download failed:', error);
+                downloadStatus.innerHTML = `
+                    <div class="download-status download-error">
+                        ❌ Download failed: ${error.message}
+                        <br><a href="${EXE_CONFIG.url}" download="${EXE_CONFIG.filename}" style="color: #742a2a; text-decoration: underline;">Try direct download</a>
+                    </div>
+                `;
+                
+                // Hide error message after 10 seconds
+                setTimeout(() => {
+                    downloadStatus.innerHTML = '';
+                }, 10000);
+                
+            } finally {
+                // Reset button state
+                downloadBtn.disabled = false;
+                downloadBtn.style.opacity = '1';
+                downloadIcon.textContent = '⬇️';
+                downloadText.textContent = originalText;
+            }
+        }
+
+        // Check if user is already authenticated
+        function checkAuth() {
+            const authData = localStorage.getItem(SESSION_KEY);
+            if (authData) {
+                try {
+                    const { timestamp, authenticated } = JSON.parse(authData);
+                    const now = new Date().getTime();
+                    
+                    // Check if session is still valid
+                    if (authenticated && (now - timestamp) < SESSION_DURATION) {
+                        showUploader();
+                        return true;
+                    } else {
+                        // Session expired
+                        localStorage.removeItem(SESSION_KEY);
+                    }
+                } catch (e) {
+                    localStorage.removeItem(SESSION_KEY);
+                }
+            }
+            return false;
+        }
+
+        // Show uploader and hide login
+        function showUploader() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('uploaderForm').classList.remove('hidden');
+        }
+
+        // Show login and hide uploader
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('uploaderForm').classList.add('hidden');
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem(SESSION_KEY);
+            showLogin();
+            document.getElementById('password').value = '';
+            document.getElementById('login-message-area').innerHTML = `
+                <div class="alert alert-success">
+                    ✅ Successfully logged out!
+                </div>
+            `;
+            setTimeout(() => {
+                document.getElementById('login-message-area').innerHTML = '';
+            }, 3000);
+        }
+
+        // Password form submission
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const messageArea = document.getElementById('login-message-area');
+            const loginBtn = document.getElementById('loginBtn');
+            const originalText = loginBtn.textContent;
+            
+            // Show loading state
+            loginBtn.textContent = '🔍 Verifying...';
+            loginBtn.disabled = true;
+            
+            // Simulate authentication delay
+            setTimeout(() => {
+                if (password === CORRECT_PASSWORD) {
+                    // Store authentication in localStorage with timestamp
+                    const authData = {
+                        authenticated: true,
+                        timestamp: new Date().getTime()
+                    };
+                    localStorage.setItem(SESSION_KEY, JSON.stringify(authData));
+                    
+                    messageArea.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ Access granted! Welcome!
+                        </div>
+                    `;
+                    
+                    setTimeout(() => {
+                        showUploader();
+                        messageArea.innerHTML = '';
+                    }, 1000);
+                } else {
+                    messageArea.innerHTML = `
+                        <div class="alert alert-error">
+                            ❌ Invalid password! Access denied.
+                        </div>
+                    `;
+                    
+                    // Clear password field
+                    document.getElementById('password').value = '';
+                    
+                    // Shake animation for wrong password
+                    const container = document.getElementById('loginForm');
+                    container.style.animation = 'shake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        container.style.animation = '';
+                    }, 500);
+                }
+                
+                // Reset button
+                loginBtn.textContent = originalText;
+                loginBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Shake animation for wrong password
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
         // Auto-resize textarea
         const textarea = document.getElementById('code');
         textarea.addEventListener('input', function() {
@@ -374,7 +744,7 @@ console.log(fibonacci(10));"></textarea>
             this.style.height = Math.max(this.scrollHeight, 200) + 'px';
         });
 
-        // Form submission
+        // Form submission for code upload
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -444,12 +814,20 @@ console.log(fibonacci(10));"></textarea>
             // Ctrl/Cmd + Enter to submit form
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
-                document.getElementById('uploadForm').dispatchEvent(new Event('submit'));
+                const activeForm = document.querySelector('.container:not(.hidden) form');
+                if (activeForm) {
+                    activeForm.dispatchEvent(new Event('submit'));
+                }
+            }
+            
+            // Escape to logout (when uploader is visible)
+            if (e.key === 'Escape' && !document.getElementById('uploaderForm').classList.contains('hidden')) {
+                logout();
             }
         });
 
         // Add focus animation
-        const inputs = document.querySelectorAll('input');
+        const inputs = document.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
             input.addEventListener('focus', function() {
                 this.style.transform = 'scale(1.02)';
@@ -458,6 +836,63 @@ console.log(fibonacci(10));"></textarea>
             input.addEventListener('blur', function() {
                 this.style.transform = 'scale(1)';
             });
+        });
+
+        // Session timeout warning
+        function checkSessionTimeout() {
+            const authData = localStorage.getItem(SESSION_KEY);
+            if (authData) {
+                try {
+                    const { timestamp } = JSON.parse(authData);
+                    const now = new Date().getTime();
+                    const timeLeft = SESSION_DURATION - (now - timestamp);
+                    
+                    // Show warning 5 minutes before expiry
+                    if (timeLeft < 5 * 60 * 1000 && timeLeft > 0) {
+                        const minutes = Math.ceil(timeLeft / (60 * 1000));
+                        if (!document.querySelector('.session-warning')) {
+                            const messageArea = document.getElementById('message-area');
+                            messageArea.innerHTML = `
+                                <div class="alert alert-error session-warning">
+                                    ⚠️ Session expires in ${minutes} minute(s). Save your work!
+                                </div>
+                            ` + messageArea.innerHTML;
+                        }
+                    }
+                    
+                    // Auto logout when session expires
+                    if (timeLeft <= 0) {
+                        logout();
+                        alert('Session expired. Please login again.');
+                    }
+                } catch (e) {
+                    localStorage.removeItem(SESSION_KEY);
+                }
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) {
+                showLogin();
+            }
+            
+            // Check session timeout every minute
+            setInterval(checkSessionTimeout, 60000);
+        });
+
+        // Prevent right-click and some keyboard shortcuts for basic protection
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            // Disable F12, Ctrl+Shift+I, Ctrl+U, Ctrl+Shift+C
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C')) ||
+                (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+            }
         });
     </script>
 </body>
